@@ -67,29 +67,42 @@ terraform -chdir="environments/primary/network_rds" destroy \
 destroy_stack "dr/ecs"
 destroy_stack "primary/ecs"
 
-if [[ -f "scripts/runtime/primary-ecr-image-uri" ]]; then
-    PRIMARY_ECR_IMAGE_URI=$(cat runtime/primary-ecr-image-uri)
-    PRIMARY_IMAGE_TAG="${PRIMARY_ECR_IMAGE_URI##*:}"
-    echo "Loaded image for cleanup: $PRIMARY_ECR_IMAGE_URI"
-    aws ecr batch-delete-image \
-      --repository-name "$ECR_REPO_NAME" \
-      --image-ids imageTag="$PRIMARY_IMAGE_TAG" \
-      --region "$PRIMARY_REGION" || true
+
+
+# Destroying primary ECR repository
+echo "🗑️  Cleaning up primary ECR repository..."
+if aws ecr describe-repositories \
+    --repository-names "$ECR_REPO_NAME" \
+    --region "$PRIMARY_REGION" >/dev/null 2>&1; then
+
+  echo "Deleting primary ECR repository: $ECR_REPO_NAME"
+
+  aws ecr delete-repository \
+    --repository-name "$ECR_REPO_NAME" \
+    --region "$PRIMARY_REGION" \
+    --force || true
+
 else
-    echo "No runtime ECR image state found in primary environment — skipping image cleanup."
+  echo "Primary ECR repository does not exist — skipping."
+fi
+# Destroying DR ECR repository
+echo "🗑️  Cleaning up DR ECR repository..."
+if aws ecr describe-repositories \
+    --repository-names "$ECR_REPO_NAME" \
+    --region "$DR_REGION" >/dev/null 2>&1; then
+
+  echo "Deleting DR ECR repository: $ECR_REPO_NAME"
+
+  aws ecr delete-repository \
+    --repository-name "$ECR_REPO_NAME" \
+    --region "$DR_REGION" \
+    --force || true
+
+else
+  echo "DR ECR repository does not exist — skipping."
 fi
 
-if [[ -f "scripts/runtime/dr-ecr-image-uri" ]]; then
-    DR_ECR_IMAGE_URI=$(cat runtime/dr-ecr-image-uri)
-    DR_IMAGE_TAG="${DR_ECR_IMAGE_URI##*:}"
-    echo "Loaded image for cleanup: $DR_ECR_IMAGE_URI"
-    aws ecr batch-delete-image \
-      --repository-name "$ECR_REPO_NAME" \
-      --image-ids imageTag="$DR_IMAGE_TAG" \
-      --region "$DR_REGION" || true
-else
-    echo "No runtime ECR image state found in DR environment — skipping image cleanup."
-fi
+
 
 if [[ -d "${RUNTIME_DIR}" ]]; then
     echo "Removing runtime directory..."
