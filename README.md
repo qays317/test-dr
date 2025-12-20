@@ -13,23 +13,22 @@ This repository delivers a **real-world enterprise disaster recovery design** fo
 All infrastructure is 100% managed using **Terraform**, following AWS **Well-Architected best practices**.
 
 ---
+# 📘 Table of Contents
 
-# 📘 **Table of Contents**
-
-* [Architecture Overview](#architecture-overview)
-* [Key Features](#key-features)
-* [Design Principles](#design-principles)
-* [Technology Stack](#technology-stack)
-* [Infrastructure Components](#infrastructure-components)
-* [Failover Strategy](#failover-strategy)
-* [Terraform Structure](#terraform-structure)
-* [Reviewer Setup (How to Deploy This Project in Your AWS Account)](#reviewer-setup-how-to-deploy-this-project-in-your-aws-account)
-* [DR Failover Guide](#dr-failover-guide)
-* [CloudWatch Monitoring and Alarms](#cloudwatch-monitoring-and-alarms)
-* [Security Best Practices Used](#security-best-practices-used)
-* [Cost Optimization](#cost-optimization)
-* [Known Limitations and Trade-offs](#known-limitations-and-trade-offs)
-* [License](#license)
+- [Architecture Overview](#architecture-overview)
+- [Key Features](#key-features)
+- [Design Principles](#design-principles)
+- [Technology Stack](#technology-stack)
+- [Infrastructure Components](#infrastructure-components)
+- [Failover Strategy](#failover-strategy)
+- [Terraform Structure](#terraform-structure)
+- [Reviewer Setup (How to Deploy This Project in Your AWS Account)](#reviewer-setup-how-to-deploy-this-project-in-your-aws-account-)
+- [DR Failover Guide](#dr-failover-guide)
+- [CloudWatch Monitoring and Alarms](#cloudwatch-monitoring-and-alarms)
+- [Security Best Practices Used](#security-best-practices-used)
+- [Cost Optimization](#cost-optimization)
+- [Known Limitations and Trade-offs](#known-limitations-and-trade-offs)
+- [License](#license)
 
 ---
 
@@ -601,7 +600,25 @@ scripts/runtime/dr-ecr-image-uri
 ```
 The ECS task definitions in both regions then read the correct image URI from these runtime files, so the reviewer does not need to manage image tags manually.
 
-## 💣 7. Destroy the Infrastructure
+### 🔐 WordPress Admin Credentials
+
+After the infrastructure deployment completes and WordPress is fully initialized, you can log in to the WordPress admin dashboard using the following 
+
+**default credentials**:
+
+```text
+Username: admin
+Password: Admin123!
+```
+**Login URL**:
+
+```text
+https://<your-domain>/wp-admin
+```
+
+---
+
+## 💣 8. Destroy the Infrastructure
 
 From GitHub → Actions:
 
@@ -677,7 +694,9 @@ The database-initialization Lambda function (wordpress-db-setup) includes full l
 * All Lambda execution output (including errors, DB setup output, Secrets Manager interactions) is logged
 * Logs assist in debugging database bootstrap, credential provisioning, and RDS post-creation automation
 
-Additionally, a Terraform null_resource triggers the Lambda function immediately after creation to ensure DB setup runs automatically.
+The database-initialization Lambda function is triggered automatically during the initial deployment process to perform one-time WordPress database bootstrap operations (schema creation and credential initialization).
+
+This automation is intentionally designed to run only during initial provisioning. Future schema changes or migrations are expected to be handled via application-level processes or CI/CD pipelines.
 
 ---
 
