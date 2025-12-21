@@ -1,13 +1,13 @@
 ############################################
 #  AWS Regions
 ############################################
-PRIMARY_REGION="us-east-1"
-DR_REGION="ca-central-1"
+PRIMARY_REGION="us-east-2"
+DR_REGION="eu-west-2"
 
 ############################################
 #  Terraform Backend Config
 ############################################
-TF_STATE_BUCKET_NAME="terraform-state-1011202555"
+TF_STATE_BUCKET_NAME="terraform-state-101120255555"
 TF_STATE_BUCKET_REGION="eu-central-1"
 
 ############################################
@@ -30,9 +30,9 @@ RDS_IDENTIFIER="wordpress-rds"
 ############################################
 #  Domain and hosted zone
 ############################################
-HOSTED_ZONE_ID=""
-PRIMARY_DOMAIN="example.com"   # Primary custom domain without www (e.g., yourdomain.com)
-CERTIFICATE_SANs='["*.example.com"]'
+HOSTED_ZONE_ID="Z0201471MCIEQVEUEMQF"
+PRIMARY_DOMAIN="rqays.com"   # Primary custom domain without www (e.g., yourdomain.com)
+CERTIFICATE_SANs='["*.rqays.com"]'
 
 ############################################
 #  SSL certificates
