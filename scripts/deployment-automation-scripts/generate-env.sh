@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-CONFIG_FILE="$(dirname "$0")/../config.yaml"
+CONFIG_FILE="$(dirname "$0")/config.yaml"
 OUT_FILE="$(dirname "$0")/runtime.env"
 
 command -v yq >/dev/null 2>&1 || {
