@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-CONFIG_FILE="$(dirname "$0")/config.yaml"
-OUT_FILE="$(dirname "$0")/runtime.env"
+CONFIG_FILE="$(dirname "$0")/../config.yaml"
+RUNTIME_DIR="$(dirname "$0")/runtime"
+OUT_FILE="${RUNTIME_DIR}/env.generated"
+
+mkdir -p "$RUNTIME_DIR"
 
 command -v yq >/dev/null 2>&1 || {
   echo "❌ yq is required"; exit 1;
 }
 
 cat <<EOF > "$OUT_FILE"
-# Generated file — DO NOT EDIT
+# Generated — DO NOT EDIT
 
 TF_STATE_BUCKET_NAME=$(yq '.terraform.backend.bucket_name' "$CONFIG_FILE")
 TF_STATE_BUCKET_REGION=$(yq '.terraform.backend.region' "$CONFIG_FILE")
@@ -31,4 +34,4 @@ DR_ALB_SSL_CERTIFICATE_ARN=$(yq '.certificates.alb.dr' "$CONFIG_FILE")
 CLOUDFRONT_SSL_CERTIFICATE_ARN=$(yq '.certificates.cloudfront' "$CONFIG_FILE")
 EOF
 
-echo "✅ runtime.env generated"
+echo "✅ Runtime env generated at ${OUT_FILE}"
