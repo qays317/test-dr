@@ -1,7 +1,10 @@
 #!/bin/bash
 
 set -e
-source "$(dirname "$0")/config.yaml"
+./scripts/generate-env.sh
+source "$(dirname "$0")/scripts/runtime.env"
+source "$(dirname "$0")/stacks_config.sh"
+
 source "$(dirname "$0")/stacks_config.sh" 
 
 # Validate TF backend bucket
