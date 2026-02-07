@@ -1,8 +1,9 @@
 #!/bin/bash
 
 set -e
+
 ./scripts/generate-env.sh
-source "$(dirname "$0")/scripts/runtime.env"
+source "$(dirname "$0")/scripts/runtime/env.generated"
 source "$(dirname "$0")/stacks_config.sh"
 
 source "$(dirname "$0")/stacks_config.sh" 
